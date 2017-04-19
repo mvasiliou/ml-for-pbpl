@@ -1,0 +1,28 @@
+Upon initially looking at the plots I generated, there doesn't seem to be much one-to-one correlation
+with the 2 Year Deliquency variable. Having a low debt ratio seems to be important, which is also correlated
+with monthly income. There also seemed to be some correlation between utilizing more lines of credit
+and lower rates of serious delinquency. In general, I found that using plotting to examine the data on
+a binary variables is not super helpful. 
+
+However, I did know that this meant using a tree or logit model would be beneficial. After trying both,
+I found the logit model to be about 4% more accurate. I decided to try Nearest Neighbors for k=5 after that,
+which seemed to work as well as a Decision Tree on some times and as well as the logit model on other
+attempts, just because my training and testing set was random each time through. I then tried to iterate through a series of k's to find the best one. This was incredibly slow, so I limited to just 1-10 k. In the future,
+I'd like to understand more about the best/quickest way to validate my models, because I feel like my 
+methodology for validating my predictions is part of the bottleneck. Perhaps this is just my laptop as well.
+It also wasn't super clear to me how to output the features of each model that were determinant of the final
+result. I understand this isn't exactly possible for k neighbors, but it should be for logit and a decision tree.
+
+
+In terms of my pipeline, I think I made it pretty easy to add more models down the line. My current setup for 
+predictions does repeat a fit => predict => validate form for each type of model, so in the future, I might
+look to setting this up as a single function in order to use less repeating code. As of now, I wasn't sure
+if those functions should be lumped together or not yet, so I left them as separate pieces. 
+
+For reading data, I didn't want my function to be limited to just CSV's as of now, as a single line 
+function to just call read_csv() seemed silly. So I added a piece to call from an API given a url, though
+this will almost certainly need to be specified down the line to allow for auth, getting deeper layers in a
+JSON tree, and adding parameters to the API call. It's all pretty likely that the read_json() piece
+will not properly format data from an API without more specific information about the structure of the data.
+Otherwise, I am pretty satisfied with the extensibility of my pipeline as of now, given that I wrote my code
+knowing that I'd like to add additional models, data filling methods, and ways of reading in data.  

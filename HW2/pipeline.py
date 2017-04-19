@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sklearn
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
 
 def read_data(source, method='csv'):
     if method == 'csv':
@@ -37,6 +39,14 @@ def explore_data(df):
         print('########################')
 
 
+def scatter_data(df, target):
+    for column in df.columns:
+        df.plot(x= column, y=target, kind='scatter')
+        fig = plt.gcf()
+        fig.savefig(column + '_' + target + '_scatter.png')
+        plt.close()
+
+
 def fill_empty(df, fill_method='mean'):
     if fill_method == 'mean':
         df = df.fillna(df.mean())
@@ -60,21 +70,38 @@ def dummy_categories(df, column):
         df[column] = dummies[column]
 
 
-def fit_model(df, target, features, method):
+def fit_model(df, target, features, method, k=5):
     y = df[target]
     X = df[features]
-    dt = DecisionTreeClassifier()
-    model = dt.fit(X, y)
+    if method == 'tree':
+        classifier = DecisionTreeClassifier()
+    elif method == 'logit':
+        classifier = LogisticRegression()
+    elif method == 'neighbors':
+        classifier = KNeighborsClassifier(n_neighbors=k)
+    model = classifier.fit(X, y)
     return model
 
 
-def predict_model(df, model, features):
+def predict_model(df, model, features, result_name):
     to_drop = [x for x in df.columns if x not in features]
-    df.drop(to_drop, axis=1, inplace=True)
-    df['prediction'] = model.predict(df)
+    df[result_name] = model.predict(df.drop(to_drop, axis=1))
 
 
 def validate_model(df, answers, prediction):
-    df['answers'] = answers
-    df['correct'] = (df['answers'] == df[prediction])
+    df['correct'] = (answers == df[prediction])
     return len(df[df['correct']==True]) / len(df)
+
+
+def best_k(training, testing, target, features, ceiling, target_answers):
+    best_prediction = 0
+    best_k = 0
+    for i in range(1, ceiling+1):
+        neighbor_model = fit_model(training, target, features=features, method='neighbors', k=i)
+        column = 'neighbor_prediction_k_'+str(i)
+        predict_model(testing, neighbor_model, features, column)
+        neighbor_accuracy = validate_model(testing, target_answers, column)
+        if neighbor_accuracy > best_prediction:
+            best_prediction = neighbor_accuracy
+            best_k = i
+    return best_prediction, best_k
