@@ -6,11 +6,6 @@ from grid import *
 import datetime
 
 
-
-#Plotting the binary variables would probably be more helpful if you grouped your
-#data based on another variable. 
-#Seeing if the relative frequency of the binary outcomes changes depending on how you filter the data would probably be helpful
-
 ##############################################################################
 # SETUP FUNCTIONS ############################################################
 ##############################################################################
@@ -232,7 +227,7 @@ def prec_recall_k(y_true, y_scores, k):
 
 
 def main():
-    grid = TEST_GRID
+    grid = SMALL_GRID
     models_to_run=['RF','DT','KNN', 'ET', 'AB', 'GB', 'LR', 'NB'] #'SVM','SGD']
 
     df = read_data("credit-data.csv")
@@ -257,7 +252,7 @@ def main():
     y = df.SeriousDlqin2yrs
 
     results_df = classifier_loop(models_to_run, CLASSIFIERS, grid, X, y)
-    results_df.to_csv('results.csv', index=False)
+    results_df.to_csv('results-small2.csv', index=False)
 
 if __name__ == '__main__':
     main()
