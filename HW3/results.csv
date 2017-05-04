@@ -1,0 +1,9 @@
+model_type,clf,parameters,auc-roc,p_at_5,p_at_10,p_at_20,run_time
+RF,RF,"{'max_depth': 1, 'max_features': 'sqrt', 'min_samples_split': 10, 'n_estimators': 1}",0.6532227173511851,0.464,0.6725333333333333,0.3396,0.181541
+DT,DT,"{'criterion': 'gini', 'max_depth': 1, 'max_features': 'sqrt', 'min_samples_split': 10}",0.6673684503878791,0.6357333333333334,0.3178666666666667,0.3396,0.041066
+KNN,KNN,"{'algorithm': 'auto', 'n_neighbors': 5, 'weights': 'uniform'}",0.5733851518665635,0.4666666666666667,0.23333333333333334,0.11666666666666667,5.086136
+ET,ET,"{'criterion': 'gini', 'max_depth': 1, 'max_features': 'sqrt', 'min_samples_split': 10, 'n_estimators': 1}",0.5479974505222341,0.8938666666666667,0.6792,0.3396,0.138571
+AB,AB,"{'algorithm': 'SAMME', 'n_estimators': 1}",0.6532227173511851,0.464,0.6725333333333333,0.3396,0.122385
+GB,GB,"{'learning_rate': 0.1, 'max_depth': 1, 'n_estimators': 1, 'subsample': 0.5}",0.6532227173511851,0.464,0.6725333333333333,0.3396,0.204261
+LR,LR,"{'C': 0.01, 'penalty': 'l1'}",0.6946466257549218,0.3296,0.2304,0.15786666666666666,3.181976
+NB,NB,{},0.70578227596021,0.2981333333333333,0.2224,0.164,0.075327
