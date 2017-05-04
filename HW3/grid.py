@@ -72,6 +72,17 @@ SMALL_GRID['KNN'] = {'n_neighbors': [1,5,10,25,50,100],'weights': ['uniform','di
 LARGE_GRID['KNN'] = {'n_neighbors': [1,5,10,25,50,100],'weights': ['uniform','distance'],'algorithm': ['auto','ball_tree','kd_tree']}
 TEST_GRID['KNN'] = {'n_neighbors': [5],'weights': ['uniform'],'algorithm': ['auto']}
 
+def get_classifiers():
+    return CLASSIFIERS
 
+def get_param_grid(grid):
+    if grid == 'test':
+        return TEST_GRID
+    elif grid == 'small':
+        return SMALL_GRID
+    elif grid == 'large':
+        return LARGE_GRID
+    else:
+        return {}
 
 
