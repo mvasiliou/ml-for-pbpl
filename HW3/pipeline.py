@@ -1,9 +1,72 @@
 import pandas as pd
 import numpy as np
+import seaborn as sns
 from sklearn.metrics import *
 from sklearn.model_selection import train_test_split, ParameterGrid
+import matplotlib.pyplot as plt
 from grid import *
 import datetime
+
+##############################################################################
+# EXPLORE FUNCTIONS ##########################################################
+##############################################################################
+
+def describe_data(df):
+    '''
+    Describes the data in each column
+    '''
+    for column in df.columns:
+        print(column)
+        print(df[column].describe())
+        print('########################')
+
+
+def histograms(df):
+    '''
+    Generates a histogram for each column.
+    '''
+    for column in df.columns:
+        fig, ax = plt.subplots(figsize=(5,5)) 
+        ax = sns.distplot(df[column])
+        plt.title('Distribution of ' + column) 
+        plt.savefig('Plots/Histograms/hist_' + column + '.png')
+        plt.close()
+
+
+def correlation_matrix(df):
+    '''
+    Generates a correlation matrix of each variable pairing.
+    '''
+    corrmat = df.corr()
+    fig, ax = plt.subplots(figsize=(10,10))  
+    sns.heatmap(corrmat, vmax=.8, square=True)
+    plt.yticks(rotation=0)
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    plt.savefig('Plots/correlation_matrix.png')
+    plt.close()
+
+
+def describe_missing_values(df):
+    '''
+    Counts the rows with missing data and determines if the mean
+    of a feature in missing rows is much higher or lower than the 
+    mean for all rows. 
+    '''
+    missing = df[df.isnull().any(axis=1)]
+    for column in df.columns:
+        if missing[column].mean() < (df[column].mean() * 0.75):
+            print('The mean ' + column + ' in rows with missing values is less' 
+                  + 'than 75% of the general mean ' + column)
+
+            print('\tMissing Row Mean: ' + str(missing[column].mean()))
+            print('\tAll Rows Mean: ' + str(df[column].mean()))
+        elif missing[column].mean() > (df[column].mean() * 1.25):
+            print('The mean ' + column + ' in rows with missing values is '
+                  + 'greater than 125% of the general mean ' + column)
+            print('\tMissing Row Mean: ' + str(missing[column].mean()))
+            print('\tAll Rows Mean: ' + str(df[column].mean()))
+    print("Total rows with missing values: " + str(len(missing)))
 
 
 ##############################################################################
@@ -227,10 +290,19 @@ def prec_recall_k(y_true, y_scores, k):
 
 
 def main():
+    df = read_data("credit-data.csv")
+    describe_data(df)
+    describe_missing_values(df)
+    df['MonthlyIncome'] = fill_empty(df['MonthlyIncome'], 'mean')
+    df['NumberOfDependents'] = fill_empty(df['NumberOfDependents'], 'mean')
+    
+    correlation_matrix(df)
+    histograms(df)
+
+
     grid = SMALL_GRID
     models_to_run=['RF','DT','KNN', 'ET', 'AB', 'GB', 'LR', 'NB'] #'SVM','SGD']
 
-    df = read_data("credit-data.csv")
     features  = ['RevolvingUtilizationOfUnsecuredLines',
                   'DebtRatio',
                   'age',
@@ -243,16 +315,13 @@ def main():
                   'NumberRealEstateLoansOrLines',
                   'NumberOfTime60-89DaysPastDueNotWorse',
                   'NumberOfDependents'
-                ]
-
-    df['MonthlyIncome'] = fill_empty(df['MonthlyIncome'], 'mean')
-    df['NumberOfDependents'] = fill_empty(df['NumberOfDependents'], 'mean')
+            ]
 
     X = df[features]
     y = df.SeriousDlqin2yrs
 
     results_df = classifier_loop(models_to_run, CLASSIFIERS, grid, X, y)
-    results_df.to_csv('results-small2.csv', index=False)
+    results_df.to_csv('results.csv', index=False)
 
 if __name__ == '__main__':
     main()
